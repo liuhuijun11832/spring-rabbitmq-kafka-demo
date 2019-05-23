@@ -3,7 +3,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>spring-rabbit-demo</artifactId>
+        <artifactId>spring-rabbitmq-kafka-demo</artifactId>
         <groupId>com.joy</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -13,8 +13,6 @@
     <artifactId>rabbit-consumer</artifactId>
 
     <name>rabbit-consumer</name>
-    <!-- FIXME change it to the project's website -->
-    <url>http://www.example.com</url>
 
 
     <dependencies>
@@ -22,6 +20,16 @@
             <groupId>com.joy</groupId>
             <artifactId>rabbit-common</artifactId>
             <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-amqp</artifactId>
         </dependency>
     </dependencies>
 </project>
