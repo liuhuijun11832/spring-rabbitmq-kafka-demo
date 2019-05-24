@@ -36,6 +36,9 @@ public class AmqpTest {
         rabbitTemplate.setExchange("joy.fanout.exchange");
         rabbitTemplate.setRoutingKey("queue-1");
         rabbitTemplate.convertAndSend("我是谁？我在哪？我要干什么？");
+        rabbitTemplate.setRoutingKey("queue-3");
+        rabbitTemplate.convertAndSend("我是谁？我在哪？我要干什么？");
+
     }
 
     @Test

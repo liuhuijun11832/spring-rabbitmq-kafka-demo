@@ -13,7 +13,7 @@
         <module>rabbit-common</module>
         <module>kafka-provider</module>
         <module>kafka-consumer</module>
-        <module>kafka-logback-provider</module>
+        <module>kafka-log4j2-provider</module>
     </modules>
     <packaging>pom</packaging>
 

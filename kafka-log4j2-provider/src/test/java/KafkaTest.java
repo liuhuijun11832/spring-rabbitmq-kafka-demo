@@ -20,7 +20,6 @@ public class KafkaTest {
     @Test
     public void test(){
         kafkaTemplate.send("default-topic", "hello world");
-        kafkaTemplate.send("log-topic", "hello log");
     }
 
 }

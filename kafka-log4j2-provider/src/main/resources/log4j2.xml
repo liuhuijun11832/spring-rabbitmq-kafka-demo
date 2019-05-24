@@ -10,6 +10,8 @@ packages="com.joy">
         <Kafka name="Kafka" topic="log-topic">
             <PatternLayout pattern="[%p] [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%class{36}] %L %M - %msg%xEx%n"/>
             <Property name="bootstrap.servers">localhost:9092</Property>
+            <Property name="retries">0</Property>
+            <Property name="syncSend">false</Property>
         </Kafka>
     </Appenders>
     <Loggers>
