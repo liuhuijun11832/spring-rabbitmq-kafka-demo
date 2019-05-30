@@ -12,6 +12,8 @@ packages="com.joy">
             <Property name="bootstrap.servers">localhost:9092</Property>
             <Property name="retries">0</Property>
             <Property name="syncSend">false</Property>
+            <Property name="max.block.ms">1000</Property>
+            <Property name="delivery.timeout.ms">1000</Property>
         </Kafka>
     </Appenders>
     <Loggers>
