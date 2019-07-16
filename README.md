@@ -4,6 +4,7 @@
 * rabbit-consumer：包含mq的消费者
 * rabbit-provider: 包含mq的生产者
 * kafka-provider：kafka的发送方
+* kafka-log4j2-provider: 配置KafkaAppender经log4j2日志发送到kafka
 * kafka-consumer: kafka的消费方
 # 启动说明
 consumer和provider需要使用servlet容器启动，推荐jetty或者tomcat，启动前修改生产者和消费者resources/rabbit.properties以及resources/kafka.properties文件，修改为自己的所使用的队列信息即可。
