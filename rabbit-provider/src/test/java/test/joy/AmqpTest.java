@@ -77,6 +77,7 @@ public class AmqpTest {
         rabbitTemplate.convertAndSend("normal-queue1",user,message ->
         {
             message.getMessageProperties().setExpiration("10000");
+            message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
             return message;
         });
         user.setName("刘狗剩");
