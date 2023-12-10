@@ -23,8 +23,8 @@ import java.util.Map;
  * @Author: Joy
  * @Date: 2019-05-22 10:06
  */
-@EnableKafka
-@Configuration
+//@EnableKafka
+//@Configuration
 public class KafkaConfiguration {
 
     @Value("${bootstrap.servers}")
