@@ -10,15 +10,16 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.joy</groupId>
-    <artifactId>spring-rabbitmq-kafka-demo</artifactId>
+    <artifactId>mq-learning</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>rabbit-provider</module>
         <module>rabbit-consumer</module>
         <module>rabbit-common</module>
         <module>kafka-provider</module>
-        <module>kafka-consumer</module>
+        <module>spring-kafka-consumer</module>
         <module>kafka-log4j2-provider</module>
+        <module>kafka-consumer</module>
     </modules>
     <packaging>pom</packaging>
 

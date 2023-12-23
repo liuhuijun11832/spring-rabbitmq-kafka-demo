@@ -24,7 +24,7 @@ import java.util.Map;
  * @Date: 2019-05-22 10:06
  */
 //@EnableKafka
-//@Configuration
+@Configuration
 public class KafkaConfiguration {
 
     @Value("${bootstrap.servers}")

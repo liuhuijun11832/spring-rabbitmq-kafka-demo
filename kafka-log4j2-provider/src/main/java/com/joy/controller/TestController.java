@@ -18,7 +18,7 @@ public class TestController {
 
     @GetMapping("/test")
     public String test(){
-        kafkaTemplate.send("default-topic", "hello world");
+        kafkaTemplate.send("default-topic-hello", "hello world");
         return "ok";
     }
 

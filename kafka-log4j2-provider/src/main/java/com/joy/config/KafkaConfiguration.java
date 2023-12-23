@@ -16,12 +16,12 @@ public class KafkaConfiguration {
 
     @Bean
     public NewTopic defaultTopic(){
-        return new NewTopic("default-topic",1,(short) 2);
+        return new NewTopic("default-topic",1,(short) 1);
     }
 
     @Bean
     public NewTopic logTopic(){
-        return new NewTopic("log-topic", 1, (short) 2);
+        return new NewTopic("log-topic", 1, (short) 1);
     }
 
 }
