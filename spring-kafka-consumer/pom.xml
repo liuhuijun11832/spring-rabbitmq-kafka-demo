@@ -9,7 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>spring-kafka-consumer</artifactId>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
 
 
 
@@ -41,7 +41,7 @@
   </dependencies>
 
   <build>
-    <finalName>kafka-consumer</finalName>
+    <finalName>spring-kafka-consumer</finalName>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
         <plugin>

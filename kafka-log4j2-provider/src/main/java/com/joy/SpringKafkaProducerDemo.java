@@ -6,10 +6,10 @@ import org.springframework.kafka.annotation.EnableKafka;
 
 @EnableKafka
 @SpringBootApplication
-public class KafkaProducerDemo {
+public class SpringKafkaProducerDemo {
 
     public static void main(String[] args) {
-        SpringApplication.run(KafkaProducerDemo.class, args);
+        SpringApplication.run(SpringKafkaProducerDemo.class, args);
     }
 
 }

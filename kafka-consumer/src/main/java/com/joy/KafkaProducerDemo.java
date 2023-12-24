@@ -10,17 +10,21 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KafkaProducerDemo {
+
+    private static final Logger logger = LoggerFactory.getLogger(KafkaProducerDemo.class);
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         Map<String, Object> configs = initConfigs();
         KafkaProducer<String, String> producer = new KafkaProducer<>(configs);
-        ProducerRecord<String,String> producerRecord = new ProducerRecord<>("default-topic-hello", "hello kafka");
+        ProducerRecord<String,String> producerRecord = new ProducerRecord<>("default-topic-hello1", "hello kafka");
         Future<RecordMetadata> future = producer.send(producerRecord);
         RecordMetadata recordMetadata = future.get();
-        System.out.println(recordMetadata.offset());
-        System.out.println(recordMetadata.timestamp());
+        logger.info("=====>{}", recordMetadata.offset());
+        logger.info("=====>{}", recordMetadata.timestamp());
     }
 
     private static Map<String,Object> initConfigs(){

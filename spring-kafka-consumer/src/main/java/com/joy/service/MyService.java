@@ -19,7 +19,7 @@ public class MyService {
         log.info(records.topic() + "===>" + records.value());
     }
 
-    @KafkaListener(id = "log", topics = "log-topic")
+    @KafkaListener(id = "log", topics = "default-topic-hello1")
     public void process1(ConsumerRecord<?, ?> records) {
         log.info(records.topic() + "===>" + records.value());
     }
