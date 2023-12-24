@@ -20,7 +20,7 @@ public class KafkaProducerDemo {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         Map<String, Object> configs = initConfigs();
         KafkaProducer<String, String> producer = new KafkaProducer<>(configs);
-        ProducerRecord<String,String> producerRecord = new ProducerRecord<>("default-topic-hello1", "hello kafka");
+        ProducerRecord<String,String> producerRecord = new ProducerRecord<>("default-topic", "hello kafka");
         Future<RecordMetadata> future = producer.send(producerRecord);
         RecordMetadata recordMetadata = future.get();
         logger.info("=====>{}", recordMetadata.offset());

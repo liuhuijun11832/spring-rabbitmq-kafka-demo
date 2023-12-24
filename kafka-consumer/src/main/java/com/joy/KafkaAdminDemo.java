@@ -15,7 +15,7 @@ public class KafkaAdminDemo {
     public static void main(String[] args) {
         AdminClient adminClient = KafkaAdminClient.create(initConfigs());
         CreateTopicsResult topics = adminClient.createTopics(
-            Collections.singleton(new NewTopic("default-topic-hello1", 1, (short)1)));
+            Collections.singleton(new NewTopic("default-topic", 1, (short)1)));
         topics.values().forEach((k,v)->{
             try {
                 v.get();

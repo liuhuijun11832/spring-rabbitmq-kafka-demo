@@ -21,7 +21,7 @@ public class KafkaConsumerDemo {
         Map<String, Object> configs = initConfigs();
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(configs, new StringDeserializer(),
             new StringDeserializer());
-        consumer.subscribe(Collections.singleton("default-topic-hello1"));
+        consumer.subscribe(Collections.singleton("default-topic"));
         while (true) {
             try {
                 ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(1000));
