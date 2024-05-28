@@ -40,7 +40,7 @@ public class KafkaConsumerDemo {
         configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
         configs.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
         configs.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
-        configs.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, "1000");
+        configs.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, "3600000");
         configs.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
         return configs;
     }
