@@ -26,7 +26,7 @@ public class KafkaConsumerDemo {
             try {
                 ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(1000));
                 for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
-                    logger.info("====>{}", consumerRecord.value());
+                    logger.info("{}====>{}", consumerRecord.offset(), consumerRecord.value());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
