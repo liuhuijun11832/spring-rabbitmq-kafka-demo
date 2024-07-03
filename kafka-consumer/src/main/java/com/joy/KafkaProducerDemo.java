@@ -18,6 +18,11 @@ public class KafkaProducerDemo {
     private static final Logger logger = LoggerFactory.getLogger(KafkaProducerDemo.class);
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
+        sendNormalMsg();
+        sendTransMsg();
+    }
+
+    private static void sendNormalMsg() throws InterruptedException, ExecutionException {
         Map<String, Object> configs = initConfigs();
         KafkaProducer<String, String> producer = new KafkaProducer<>(configs);
         ProducerRecord<String,String> producerRecord = new ProducerRecord<>("default-topic", "hello", "hello kafka");
@@ -27,11 +32,34 @@ public class KafkaProducerDemo {
         logger.info("=====>{}", recordMetadata.timestamp());
     }
 
+    private static void sendTransMsg() {
+        Map<String, Object> configs = initTransConfigs();
+        KafkaProducer<String, String> producer = new KafkaProducer<>(configs);
+        producer.initTransactions();
+        producer.beginTransaction();
+        ProducerRecord<String,String> producerRecord = new ProducerRecord<>("default-topic", "hello", "hello kafka");
+        try {
+            producer.send(producerRecord);
+            producer.commitTransaction();
+        } catch (Exception e) {
+            producer.abortTransaction();
+        }
+    }
+
     private static Map<String,Object> initConfigs(){
         Map<String, Object> configs = new HashMap<>();
         configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        return configs;
+    }
+
+    private static Map<String,Object> initTransConfigs(){
+        Map<String, Object> configs = new HashMap<>();
+        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        configs.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "transactional-id");
         return configs;
     }
 
