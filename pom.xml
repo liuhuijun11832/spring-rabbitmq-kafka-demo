@@ -69,6 +69,11 @@
                 <artifactId>lombok</artifactId>
                 <version>1.18.8</version>
             </dependency>
+            <dependency>
+                <groupId>io.opentracing.contrib</groupId>
+                <artifactId>opentracing-kafka-spring</artifactId>
+                <version>0.1.15</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

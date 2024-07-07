@@ -1,18 +1,24 @@
 package com.joy.config;
 
+import io.jaegertracing.internal.MDCScopeManager;
+import io.opentracing.Tracer;
+import io.opentracing.contrib.java.spring.jaeger.starter.TracerBuilderCustomizer;
+import io.opentracing.contrib.kafka.spring.TracingConsumerFactory;
+import io.opentracing.contrib.kafka.spring.TracingKafkaAspect;
+import io.opentracing.contrib.kafka.spring.TracingProducerFactory;
+import io.opentracing.util.GlobalTracer;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
-import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.core.KafkaAdmin;
+import org.springframework.kafka.core.*;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 
 import java.util.HashMap;
@@ -23,7 +29,7 @@ import java.util.Map;
  * @Author: Joy
  * @Date: 2019-05-22 10:06
  */
-//@EnableKafka
+@Slf4j
 @Configuration
 public class KafkaConfiguration {
 
@@ -48,16 +54,20 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<Integer, String>> kafkaListenerContainerFactory(){
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<Integer, String>> kafkaListenerContainerFactory(Tracer tracer){
         ConcurrentKafkaListenerContainerFactory concurrentKafkaListenerContainerFactory = new ConcurrentKafkaListenerContainerFactory();
         concurrentKafkaListenerContainerFactory.setConcurrency(3);
-        concurrentKafkaListenerContainerFactory.setConsumerFactory(consumerFactory());
+        concurrentKafkaListenerContainerFactory.setConsumerFactory(consumerFactory(tracer));
+        concurrentKafkaListenerContainerFactory.setRecordInterceptor(record -> {
+            log.info("=====>{}", record.value());
+            return record;
+        });
         return concurrentKafkaListenerContainerFactory;
     }
 
     @Bean
-    public ConsumerFactory<Integer,String> consumerFactory(){
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs());
+    public ConsumerFactory<Integer,String> consumerFactory(Tracer tracer){
+        return new TracingConsumerFactory<>(new DefaultKafkaConsumerFactory<>(consumerConfigs()), tracer);
     }
 
     @Bean
@@ -72,6 +82,36 @@ public class KafkaConfiguration {
         return props;
     }
 
+    @Bean
+    public Map<String, Object> producerConfigs(){
+        Map<String, Object> props = new HashMap<>();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokerAddress);
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        return props;
+    }
+
+    @Bean
+    public ProducerFactory<Integer, String> producerFactory(Tracer tracer){
+        return new TracingProducerFactory<>(new DefaultKafkaProducerFactory<>(producerConfigs()), tracer);
+    }
+
+    @Bean
+    public KafkaTemplate<Integer, String> kafkaTemplate(Tracer tracer){
+        return new KafkaTemplate<>(producerFactory(tracer));
+    }
+
+    @Bean
+    public TracingKafkaAspect tracingKafkaAspect(Tracer tracer){
+        return new TracingKafkaAspect(tracer);
+    }
+
+
+
+    @Bean
+    public TracerBuilderCustomizer mdcBuilder(){
+        return builder -> builder.withScopeManager(new MDCScopeManager.Builder().build());
+    }
 
 
 }

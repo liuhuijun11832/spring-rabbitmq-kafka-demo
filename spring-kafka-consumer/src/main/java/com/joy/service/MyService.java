@@ -17,22 +17,14 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class MyService {
 
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
-
     @KafkaListener(id = "default", topics = "default-topic")
     public void process(ConsumerRecord<?, ?> records) {
         log.info(records.topic() + "===>" + records.value());
-        kafkaTemplate.executeInTransaction(operations -> {
-            ProducerRecord<String, String> rec = new ProducerRecord<String, String>("default-topic", "hello", "hello world");
-            operations.send(rec);
-            return Boolean.TRUE;
-        });
     }
 
-    // @KafkaListener(id = "default-log-topic", topics = "log-topic")
-    // public void logTopic(ConsumerRecord<?, ?> records) {
-    //     log.info(records.topic() + "===>" + records.value());
-    // }
+     @KafkaListener(id = "default-transaction-topic", topics = "transaction-topic")
+     public void transTopic(ConsumerRecord<?, ?> records) {
+         log.info(records.topic() + "===>" + records.value());
+     }
 
 }
