@@ -13,6 +13,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,6 +60,7 @@ public class KafkaConfiguration {
         concurrentKafkaListenerContainerFactory.setConcurrency(3);
         concurrentKafkaListenerContainerFactory.setConsumerFactory(consumerFactory(tracer));
         concurrentKafkaListenerContainerFactory.setRecordInterceptor(record -> {
+            MDC.put("traceId", new String(record.headers().lastHeader("uber-trace-id").value()));
             log.info("=====>{}", record.value());
             return record;
         });

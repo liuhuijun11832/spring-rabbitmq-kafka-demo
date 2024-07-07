@@ -34,8 +34,6 @@ public class SendController {
 
     @PostMapping("/send")
     public String send(@RequestBody String body, @RequestParam("topic") String topic) throws ExecutionException, InterruptedException {
-        Span span = tracer.activeSpan();
-        log.info("span:{}", span);
         ListenableFuture<SendResult<Integer, String>> send = kafkaTemplate.send(topic, body);
         ProducerRecord<Integer, String> producerRecord = send.get().getProducerRecord();
         return producerRecord.value();
