@@ -18,7 +18,7 @@ public class KafkaProducerDemo {
     private static final Logger logger = LoggerFactory.getLogger(KafkaProducerDemo.class);
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        sendNormalMsg();
+//        sendNormalMsg();
         sendTransMsg();
     }
 
@@ -37,9 +37,13 @@ public class KafkaProducerDemo {
         KafkaProducer<String, String> producer = new KafkaProducer<>(configs);
         producer.initTransactions();
         producer.beginTransaction();
-        ProducerRecord<String,String> producerRecord = new ProducerRecord<>("default-topic", "hello", "hello kafka");
+        ProducerRecord<String,String> producerRecord = new ProducerRecord<>("transaction-topic", "hello", "hello kafka with transaction");
+        ProducerRecord<String,String> producerRecord1 = new ProducerRecord<>("transaction-topic", "hello", "hello kafka with transaction-1");
         try {
-            producer.send(producerRecord);
+            Future<RecordMetadata> sendResult1 = producer.send(producerRecord);
+            Future<RecordMetadata> sendResult2 = producer.send(producerRecord1);
+            logger.info("=====>{}", sendResult1.get().offset());
+            logger.info("=====>{}", sendResult2.get().offset());
             producer.commitTransaction();
         } catch (Exception e) {
             producer.abortTransaction();

@@ -1,8 +1,6 @@
 package com.joy;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -14,8 +12,12 @@ public class KafkaAdminDemo {
 
     public static void main(String[] args) {
         AdminClient adminClient = KafkaAdminClient.create(initConfigs());
-        CreateTopicsResult topics = adminClient.createTopics(
-            Collections.singleton(new NewTopic("default-topic", 1, (short)1)));
+        NewTopic defaultTopic = new NewTopic("default-topic", 1, (short) 1);
+        NewTopic transactionTopic = new NewTopic("transaction-topic", 1, (short) 1);
+        List<NewTopic> newTopicList = new ArrayList<>(2);
+        newTopicList.add(defaultTopic);
+        newTopicList.add(transactionTopic);
+        CreateTopicsResult topics = adminClient.createTopics(newTopicList);
         topics.values().forEach((k,v)->{
             try {
                 v.get();

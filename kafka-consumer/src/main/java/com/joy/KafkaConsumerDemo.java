@@ -1,9 +1,7 @@
 package com.joy;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -21,7 +19,10 @@ public class KafkaConsumerDemo {
         Map<String, Object> configs = initConfigs();
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(configs, new StringDeserializer(),
             new StringDeserializer());
-        consumer.subscribe(Collections.singleton("default-topic"));
+        Set<String> collect = new HashSet<>();
+        collect.add("default-topic");
+        collect.add("transaction-topic");
+        consumer.subscribe(collect);
         while (true) {
             try {
                 ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(1000));
@@ -42,6 +43,7 @@ public class KafkaConsumerDemo {
         configs.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
         configs.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, "3600000");
         configs.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
+        configs.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
         return configs;
     }
 
