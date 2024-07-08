@@ -1,5 +1,6 @@
 package com.joy.config;
 
+import com.alibaba.ttl.threadpool.TtlExecutors;
 import io.jaegertracing.internal.MDCScopeManager;
 import io.opentracing.Tracer;
 import io.opentracing.contrib.java.spring.jaeger.starter.TracerBuilderCustomizer;
@@ -17,13 +18,21 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.AsyncListenableTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.util.concurrent.ListenableFuture;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @Description: kafka配置
@@ -58,9 +67,10 @@ public class KafkaConfiguration {
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<Integer, String>> kafkaListenerContainerFactory(Tracer tracer){
         ConcurrentKafkaListenerContainerFactory concurrentKafkaListenerContainerFactory = new ConcurrentKafkaListenerContainerFactory();
         concurrentKafkaListenerContainerFactory.setConcurrency(3);
+//        concurrentKafkaListenerContainerFactory.getContainerProperties().setConsumerTaskExecutor();
         concurrentKafkaListenerContainerFactory.setConsumerFactory(consumerFactory(tracer));
         concurrentKafkaListenerContainerFactory.setRecordInterceptor(record -> {
-            MDC.put("traceId", new String(record.headers().lastHeader("uber-trace-id").value()));
+//            MDC.put("traceId", new String(record.headers().lastHeader("uber-trace-id").value()));
             log.info("=====>{}", record.value());
             return record;
         });
@@ -116,4 +126,15 @@ public class KafkaConfiguration {
     }
 
 
+    @Bean
+    public Executor taskExecutor(){
+        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        threadPoolTaskExecutor.setCorePoolSize(100);
+        threadPoolTaskExecutor.setMaxPoolSize(200);
+        threadPoolTaskExecutor.setQueueCapacity(1024);
+        threadPoolTaskExecutor.setAwaitTerminationSeconds(60);
+        threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+        threadPoolTaskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        return TtlExecutors.getTtlExecutor(threadPoolTaskExecutor);
+    }
 }

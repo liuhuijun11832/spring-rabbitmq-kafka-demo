@@ -62,6 +62,11 @@
       <artifactId>opentracing-spring-jaeger-web-starter</artifactId>
       <version>3.3.1</version>
     </dependency>
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>transmittable-thread-local</artifactId>
+      <version>2.14.4</version>
+    </dependency>
   </dependencies>
 
   <build>
