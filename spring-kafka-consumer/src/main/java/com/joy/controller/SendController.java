@@ -34,6 +34,7 @@ public class SendController {
 
     @PostMapping("/send")
     public String send(@RequestBody String body, @RequestParam("topic") String topic) throws ExecutionException, InterruptedException {
+        log.info("send message to kafka, topic: {}, body: {}", topic, body);
         ListenableFuture<SendResult<Integer, String>> send = kafkaTemplate.send(topic, body);
         ProducerRecord<Integer, String> producerRecord = send.get().getProducerRecord();
         return producerRecord.value();

@@ -1,11 +1,13 @@
 package com.joy.config;
 
 import io.jaegertracing.internal.MDCScopeManager;
-import io.opentracing.Tracer;
+import io.opentracing.*;
 import io.opentracing.contrib.java.spring.jaeger.starter.TracerBuilderCustomizer;
+import io.opentracing.contrib.kafka.TracingKafkaUtils;
 import io.opentracing.contrib.kafka.spring.TracingConsumerFactory;
 import io.opentracing.contrib.kafka.spring.TracingKafkaAspect;
 import io.opentracing.contrib.kafka.spring.TracingProducerFactory;
+import io.opentracing.tag.Tags;
 import io.opentracing.util.GlobalTracer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -60,8 +62,22 @@ public class KafkaConfiguration {
         concurrentKafkaListenerContainerFactory.setConcurrency(3);
         concurrentKafkaListenerContainerFactory.setConsumerFactory(consumerFactory(tracer));
         concurrentKafkaListenerContainerFactory.setRecordInterceptor(record -> {
-            MDC.put("traceId", new String(record.headers().lastHeader("uber-trace-id").value()));
-            log.info("=====>{}", record.value());
+            Tracer.SpanBuilder spanBuilder = tracer.buildSpan("interceptor" + record.topic())
+                    .withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_CONSUMER);
+
+            SpanContext parentContext = TracingKafkaUtils.extractSpanContext(record.headers(), tracer);
+            if (parentContext != null) {
+                spanBuilder.addReference(References.FOLLOWS_FROM, parentContext);
+            }
+            Span span = spanBuilder.start();
+            try (Scope ignored = tracer.activateSpan(span)) {
+                log.info("message:{}", record.value());
+            } catch (Exception e) {
+                Tags.ERROR.set(span, Boolean.TRUE);
+                throw e;
+            } finally {
+                span.finish();
+            }
             return record;
         });
         return concurrentKafkaListenerContainerFactory;
@@ -81,6 +97,7 @@ public class KafkaConfiguration {
         props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, autoCommitIntervalMs);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, "86400000");
         return props;
     }
 
